@@ -1,5 +1,7 @@
 package com.poc.chatbot.CaseCreation.Controller;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.poc.chatbot.CaseCreation.Service.CaseCreationService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4000")
+@CrossOrigin(origins = "http://localhost:3000")
 public class CaseCreationController {
 
 	@Autowired
@@ -27,7 +29,14 @@ public class CaseCreationController {
 	@PostMapping("/upload")
 	@ResponseBody
 	public String uploadDocument(@RequestParam("uploadFile") MultipartFile file) {
-		String result = caseCreationService.uploadDocument(file);
+		String result = null;
+		System.out.println("Hello From Upload");
+		try {
+			result = caseCreationService.uploadFile(file);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return result;
 	}
 }

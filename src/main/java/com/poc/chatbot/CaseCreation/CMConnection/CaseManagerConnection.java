@@ -18,9 +18,9 @@ import com.ibm.casemgmt.api.context.SimpleVWSessionCache;
 public class CaseManagerConnection {
 
 	public static ObjectStore getConnection() {
-		String uri = "http://wf-dc-poc.ibm.edu:9080/wsi/FNCEWS40MTOM/";
-		String username = "admin";
-		String password = "passw0rd";
+		String uri = "http://ibmbaw:9080/wsi/FNCEWS40MTOM/";
+		String username = "dadmin";
+		String password = "dadmin";
 		String TOS = "tos";
 		UserContext old = null;
 		CaseMgmtContext oldCmc = null;
