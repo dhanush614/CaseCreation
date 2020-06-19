@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.poc.chatbot.CaseCreation.Service.CaseCreationService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000","http://localhost:3001","https://cm-assistant-bot.eu-gb.mybluemix.net/"})
 public class CaseCreationController {
 
 	@Autowired
@@ -25,14 +25,19 @@ public class CaseCreationController {
 		String caseId = caseCreationService.createCase(claimNumber);
 		return caseId;
 	}
+	
+	@GetMapping("/validate")
+	public String validateClaim(@RequestParam("claimNumber") String claimNumber) {
+		String validateFlag = caseCreationService.validateClaim(claimNumber);
+		return validateFlag;
+	}
 
 	@PostMapping("/upload")
 	@ResponseBody
-	public String uploadDocument(@RequestParam("uploadFile") MultipartFile file) {
+	public String uploadDocument(@RequestParam("uploadFile") MultipartFile file, @RequestParam("claimNumber") String claimNumber,@RequestParam("fileName") String fileName) {
 		String result = null;
-		System.out.println("Hello From Upload");
 		try {
-			result = caseCreationService.uploadFile(file);
+			result = caseCreationService.uploadFile(file, claimNumber,fileName);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
