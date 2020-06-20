@@ -169,9 +169,6 @@ public class CaseCreationService {
 				String name = retrieveDoc.get_Name();
 				String docId=retrieveDoc.get_Id().toString();
 				String versionId=retrieveDoc.get_VersionSeries().get_Id().toString();
-				System.out.println("Document Name :: "+ name);
-				System.out.println("Document ID :: "+ docId);
-				System.out.println("Document version ID :: "+ versionId);
 				String documentUrl = ApplicationConstants.documentUrl;
 				documentUrl=documentUrl.replace("{docId}", docId);
 				documentUrl=documentUrl.replace("{versionId}", versionId);

@@ -70,7 +70,6 @@ public class CaseCreationController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println(documentLinkList);
 		return documentLinkList;
 	}
 }
