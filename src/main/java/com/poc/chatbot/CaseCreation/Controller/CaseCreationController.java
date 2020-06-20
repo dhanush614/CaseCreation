@@ -1,6 +1,8 @@
 package com.poc.chatbot.CaseCreation.Controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.poc.chatbot.CaseCreation.Pojo.DocumentLink;
 import com.poc.chatbot.CaseCreation.Service.CaseCreationService;
 
 @RestController
@@ -22,13 +25,25 @@ public class CaseCreationController {
 
 	@GetMapping("/create")
 	public String caseCreation(@RequestParam("claimNumber") String claimNumber) {
-		String caseId = caseCreationService.createCase(claimNumber);
+		String caseId = null;
+		try {
+			caseId = caseCreationService.createCase(claimNumber);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return caseId;
 	}
 	
 	@GetMapping("/validate")
 	public String validateClaim(@RequestParam("claimNumber") String claimNumber) {
-		String validateFlag = caseCreationService.validateClaim(claimNumber);
+		String validateFlag = null;
+		try {
+			validateFlag = caseCreationService.validateClaim(claimNumber);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return validateFlag;
 	}
 
@@ -43,5 +58,18 @@ public class CaseCreationController {
 			e.printStackTrace();
 		}
 		return result;
+	}
+	
+	@GetMapping("/search")
+	public List<DocumentLink> documentSearch(@RequestParam("claimNumber") String claimNumber) {
+		List<DocumentLink> documentLinkList = new ArrayList<DocumentLink>();
+		try {
+			documentLinkList = caseCreationService.documentSearch(claimNumber);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(documentLinkList);
+		return documentLinkList;
 	}
 }

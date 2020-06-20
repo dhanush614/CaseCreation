@@ -1,5 +1,9 @@
 package com.poc.chatbot.CaseCreation.CMConnection;
 
+import static com.poc.chatbot.CaseCreation.Constants.ApplicationConstants.prefix;
+
+import java.io.IOException;
+
 import javax.security.auth.Subject;
 
 import org.springframework.stereotype.Component;
@@ -13,21 +17,24 @@ import com.filenet.api.util.UserContext;
 import com.ibm.casemgmt.api.context.CaseMgmtContext;
 import com.ibm.casemgmt.api.context.SimpleP8ConnectionCache;
 import com.ibm.casemgmt.api.context.SimpleVWSessionCache;
+import com.poc.chatbot.CaseCreation.Constants.ApplicationConstants;
+import com.poc.chatbot.CaseCreation.PropertyReader.PropertyFileReader;
 
 @Component
 public class CaseManagerConnection {
 
-	public static ObjectStore getConnection() {
-		String uri = "http://ibmbaw:9080/wsi/FNCEWS40MTOM/";
-		String username = "dadmin";
-		String password = "dadmin";
-		String TOS = "tos";
+	public ObjectStore getConnection() throws IOException {
+		PropertyFileReader propertyFileReader = new PropertyFileReader();
+		String uri = propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.uri);
+		String username = propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.username);
+		String password = propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.password);
+		String TOS = propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.tos);
 		UserContext old = null;
 		CaseMgmtContext oldCmc = null;
 		ObjectStore targetOS = null;
 		try {
 			Connection conn = Factory.Connection.getConnection(uri);
-			Subject subject = UserContext.createSubject(conn, username, password, "FileNetP8WSI");
+			Subject subject = UserContext.createSubject(conn, username, password, ApplicationConstants.jaasStanzaName);
 			UserContext.get().pushSubject(subject);
 			Domain domain = Factory.Domain.fetchInstance(conn, null, null);
 			targetOS = (ObjectStore) domain.fetchObject(ClassNames.OBJECT_STORE, TOS, null);

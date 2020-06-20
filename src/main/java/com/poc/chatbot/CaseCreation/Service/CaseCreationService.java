@@ -5,13 +5,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.filenet.api.collection.ContentElementList;
+import com.filenet.api.collection.DocumentSet;
 import com.filenet.api.collection.RepositoryRowSet;
 import com.filenet.api.constants.AutoClassify;
 import com.filenet.api.constants.AutoUniqueName;
@@ -34,6 +37,8 @@ import com.ibm.casemgmt.api.CaseType;
 import com.ibm.casemgmt.api.constants.ModificationIntent;
 import com.ibm.casemgmt.api.objectref.ObjectStoreReference;
 import com.poc.chatbot.CaseCreation.CMConnection.CaseManagerConnection;
+import com.poc.chatbot.CaseCreation.Constants.ApplicationConstants;
+import com.poc.chatbot.CaseCreation.Pojo.DocumentLink;
 
 @Service
 public class CaseCreationService {
@@ -41,23 +46,23 @@ public class CaseCreationService {
 	@Autowired
 	CaseManagerConnection caseManagerConnection;
 
-	public String createCase(String claimNumber) {
-		ObjectStore targetOs = CaseManagerConnection.getConnection();
+	public String createCase(String claimNumber) throws IOException {
+		ObjectStore targetOs = caseManagerConnection.getConnection();
 		ObjectStoreReference targetOsRef = new ObjectStoreReference(targetOs);
-		CaseType caseType = CaseType.fetchInstance(targetOsRef, "DM_Demo_CT");
+		CaseType caseType = CaseType.fetchInstance(targetOsRef, ApplicationConstants.caseType);
 		Case pendingCase = Case.createPendingInstance(caseType);
-		pendingCase.getProperties().putObjectValue("DM_ClaimNumber", claimNumber);
+		pendingCase.getProperties().putObjectValue(ApplicationConstants.claimNumberProperty, claimNumber);
 		pendingCase.save(RefreshMode.REFRESH, null, ModificationIntent.MODIFY);
 		String caseId = pendingCase.getId().toString();
 		return caseId;
 
 	}
 
-	public String validateClaim(String claimNumber) {
+	public String validateClaim(String claimNumber) throws IOException {
 		String flag=null;
-		ObjectStore targetOs = CaseManagerConnection.getConnection();
+		ObjectStore targetOs = caseManagerConnection.getConnection();
 		SearchSQL sql = new SearchSQL();
-		String query="SELECT [This] FROM [DM_Demo_CT] WHERE [DM_ClaimNumber] = claim";
+		String query=ApplicationConstants.validateClaimQuery;
 		query=query.replace("claim", claimNumber);
 		sql.setQueryString(query);
 		SearchScope scope = new SearchScope(targetOs);
@@ -79,9 +84,9 @@ public class CaseCreationService {
 		 * file.getOriginalFilename()); Files.write(path, bytes);
 		 */
 		System.out.println(filName+" FileName");
-		ObjectStore targetOs = CaseManagerConnection.getConnection();
+		ObjectStore targetOs = caseManagerConnection.getConnection();
 		SearchSQL sql = new SearchSQL();
-		String query="SELECT TOP 1 [This] FROM [DM_Demo_CT] WHERE [DM_ClaimNumber] = claim";
+		String query=ApplicationConstants.uploadDocumentQuery;
 		query=query.replace("claim", claimNumber);
 		sql.setQueryString(query);
 		SearchScope scope = new SearchScope(targetOs);
@@ -95,9 +100,8 @@ public class CaseCreationService {
 			RepositoryRow row = (RepositoryRow) iterator.next();
 			folder = (Folder) row.getProperties().getObjectValue("This");
 			fileName = filName;
-			String docClass = "DM_Demo_Doc_Class";
 
-			Document doc = Factory.Document.createInstance(targetOs, docClass);
+			Document doc = Factory.Document.createInstance(targetOs, ApplicationConstants.docClass);
 			if (file != null) {
 				ContentTransfer contentTransfer = Factory.ContentTransfer.createInstance();
 					contentTransfer.setCaptureSource(file.getInputStream());
@@ -130,5 +134,48 @@ public class CaseCreationService {
 		// Create Document
 		return docId;
 
+	}
+	
+	public List<DocumentLink> documentSearch(String claimNumber) throws IOException{
+		ObjectStore targetOs = caseManagerConnection.getConnection();
+		SearchSQL sql = new SearchSQL();
+		String query = ApplicationConstants.searchDocumentQuery;
+		query=query.replace("claim", claimNumber);
+		sql.setQueryString(query);
+		List<DocumentLink> documentDetailsList = new ArrayList<DocumentLink>();
+
+		SearchScope scope = new SearchScope(targetOs);
+
+		RepositoryRowSet fetchRows = scope.fetchRows(sql, (Integer) null,
+
+				(PropertyFilter) null, new Boolean(true));
+		Iterator iterator = fetchRows.iterator();
+		
+
+		while (iterator.hasNext()) {
+
+			RepositoryRow row = (RepositoryRow) iterator.next();
+			Folder folderObj = (Folder) row.getProperties().getObjectValue("This");
+			System.out.println("Folder Name "+folderObj.get_Name());
+			DocumentSet documents = folderObj.get_ContainedDocuments(); 
+			Iterator it = documents.iterator();
+			while(it.hasNext())
+			{
+				Document retrieveDoc= (Document)it.next();
+				String name = retrieveDoc.get_Name();
+				String docId=retrieveDoc.get_Id().toString();
+				String versionId=retrieveDoc.get_VersionSeries().get_Id().toString();
+				System.out.println("Document Name :: "+ name);
+				System.out.println("Document ID :: "+ docId);
+				System.out.println("Document version ID :: "+ versionId);
+				String documentUrl = ApplicationConstants.documentUrl;
+				documentUrl=documentUrl.replace("{docId}", docId);
+				documentUrl=documentUrl.replace("{versionId}", versionId);
+				DocumentLink documentLink = new DocumentLink(name, documentUrl);
+				documentDetailsList.add(documentLink);
+			}
+		}
+		
+		return documentDetailsList;
 	}
 }
