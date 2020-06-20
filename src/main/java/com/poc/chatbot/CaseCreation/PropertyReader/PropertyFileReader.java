@@ -6,7 +6,8 @@ import java.util.Properties;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
-
+import org.springframework.stereotype.Component;
+@Component
 public class PropertyFileReader {
 	
 	public Properties getProperties(){

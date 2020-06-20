@@ -62,6 +62,7 @@ public class CaseCreationController {
 	
 	@GetMapping("/search")
 	public List<DocumentLink> documentSearch(@RequestParam("claimNumber") String claimNumber) {
+		System.out.println(claimNumber);
 		List<DocumentLink> documentLinkList = new ArrayList<DocumentLink>();
 		try {
 			documentLinkList = caseCreationService.documentSearch(claimNumber);

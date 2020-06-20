@@ -39,19 +39,23 @@ import com.ibm.casemgmt.api.objectref.ObjectStoreReference;
 import com.poc.chatbot.CaseCreation.CMConnection.CaseManagerConnection;
 import com.poc.chatbot.CaseCreation.Constants.ApplicationConstants;
 import com.poc.chatbot.CaseCreation.Pojo.DocumentLink;
+import com.poc.chatbot.CaseCreation.PropertyReader.PropertyFileReader;
 
 @Service
 public class CaseCreationService {
 
 	@Autowired
-	CaseManagerConnection caseManagerConnection;
+	public CaseManagerConnection caseManagerConnection;
+	
+	@Autowired
+	PropertyFileReader propertyFileReader;
 
 	public String createCase(String claimNumber) throws IOException {
 		ObjectStore targetOs = caseManagerConnection.getConnection();
 		ObjectStoreReference targetOsRef = new ObjectStoreReference(targetOs);
-		CaseType caseType = CaseType.fetchInstance(targetOsRef, ApplicationConstants.caseType);
+		CaseType caseType = CaseType.fetchInstance(targetOsRef, propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.caseType));
 		Case pendingCase = Case.createPendingInstance(caseType);
-		pendingCase.getProperties().putObjectValue(ApplicationConstants.claimNumberProperty, claimNumber);
+		pendingCase.getProperties().putObjectValue(propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.claimNumberProperty), claimNumber);
 		pendingCase.save(RefreshMode.REFRESH, null, ModificationIntent.MODIFY);
 		String caseId = pendingCase.getId().toString();
 		return caseId;
@@ -101,7 +105,7 @@ public class CaseCreationService {
 			folder = (Folder) row.getProperties().getObjectValue("This");
 			fileName = filName;
 
-			Document doc = Factory.Document.createInstance(targetOs, ApplicationConstants.docClass);
+			Document doc = Factory.Document.createInstance(targetOs, propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.docClass));
 			if (file != null) {
 				ContentTransfer contentTransfer = Factory.ContentTransfer.createInstance();
 					contentTransfer.setCaptureSource(file.getInputStream());

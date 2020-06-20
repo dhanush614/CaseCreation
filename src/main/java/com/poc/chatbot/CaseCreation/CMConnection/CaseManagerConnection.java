@@ -1,11 +1,10 @@
 package com.poc.chatbot.CaseCreation.CMConnection;
 
-import static com.poc.chatbot.CaseCreation.Constants.ApplicationConstants.prefix;
-
 import java.io.IOException;
 
 import javax.security.auth.Subject;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.filenet.api.constants.ClassNames;
@@ -22,9 +21,11 @@ import com.poc.chatbot.CaseCreation.PropertyReader.PropertyFileReader;
 
 @Component
 public class CaseManagerConnection {
+	
+	@Autowired
+	PropertyFileReader propertyFileReader;
 
 	public ObjectStore getConnection() throws IOException {
-		PropertyFileReader propertyFileReader = new PropertyFileReader();
 		String uri = propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.uri);
 		String username = propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.username);
 		String password = propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.password);
