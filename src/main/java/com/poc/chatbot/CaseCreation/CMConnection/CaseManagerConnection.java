@@ -1,8 +1,11 @@
 package com.poc.chatbot.CaseCreation.CMConnection;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 import javax.security.auth.Subject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,10 +28,33 @@ public class CaseManagerConnection {
 	@Autowired
 	PropertyFileReader propertyFileReader;
 
-	public ObjectStore getConnection() throws IOException {
+	public ObjectStore getConnection(HttpServletRequest httpRequest) throws IOException {
+		final String authorization = httpRequest.getHeader("Authorization");
+		String username="";
+		String password="";
+		System.out.println("Authorization ::"+authorization);
+
+		if (authorization != null && authorization.toLowerCase().startsWith("basic")) {
+
+		    // Authorization: Basic base64credentials
+
+		    String base64Credentials = authorization.substring("Basic".length()).trim();
+
+		    byte[] credDecoded = Base64.getDecoder().decode(base64Credentials);
+
+		    String credentials = new String(credDecoded, StandardCharsets.UTF_8);
+
+		    // credentials = username:password
+
+		    final String[] values = credentials.split(":", 2);
+		    
+		    username=values[0];
+		    password=values[1];
+
+		    System.out.println("User name ::"+username+" Password ::"+password);
+
+		}
 		String uri = propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.uri);
-		String username = propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.username);
-		String password = propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.password);
 		String TOS = propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.tos);
 		UserContext old = null;
 		CaseMgmtContext oldCmc = null;

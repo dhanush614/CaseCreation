@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,10 +26,10 @@ public class CaseCreationController {
 	CaseCreationService caseCreationService;
 
 	@GetMapping("/create")
-	public String caseCreation(@RequestParam("claimNumber") String claimNumber) {
+	public String caseCreation(HttpServletRequest httpRequest,@RequestParam("claimNumber") String claimNumber) {
 		String caseId = null;
 		try {
-			caseId = caseCreationService.createCase(claimNumber);
+			caseId = caseCreationService.createCase(httpRequest,claimNumber);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -36,10 +38,10 @@ public class CaseCreationController {
 	}
 	
 	@GetMapping("/validate")
-	public String validateClaim(@RequestParam("claimNumber") String claimNumber) {
+	public String validateClaim(HttpServletRequest httpRequest,@RequestParam("claimNumber") String claimNumber) {
 		String validateFlag = null;
 		try {
-			validateFlag = caseCreationService.validateClaim(claimNumber);
+			validateFlag = caseCreationService.validateClaim(httpRequest,claimNumber);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -49,10 +51,10 @@ public class CaseCreationController {
 
 	@PostMapping("/upload")
 	@ResponseBody
-	public String uploadDocument(@RequestParam("uploadFile") MultipartFile file, @RequestParam("claimNumber") String claimNumber,@RequestParam("fileName") String fileName) {
+	public String uploadDocument(HttpServletRequest httpRequest,@RequestParam("uploadFile") MultipartFile file, @RequestParam("claimNumber") String claimNumber,@RequestParam("fileName") String fileName) {
 		String result = null;
 		try {
-			result = caseCreationService.uploadFile(file, claimNumber,fileName);
+			result = caseCreationService.uploadFile(httpRequest,file, claimNumber,fileName);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -61,11 +63,10 @@ public class CaseCreationController {
 	}
 	
 	@GetMapping("/search")
-	public List<DocumentLink> documentSearch(@RequestParam("claimNumber") String claimNumber) {
-		System.out.println(claimNumber);
+	public List<DocumentLink> documentSearch(HttpServletRequest httpRequest,@RequestParam("claimNumber") String claimNumber) {
 		List<DocumentLink> documentLinkList = new ArrayList<DocumentLink>();
 		try {
-			documentLinkList = caseCreationService.documentSearch(claimNumber);
+			documentLinkList = caseCreationService.documentSearch(httpRequest,claimNumber);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

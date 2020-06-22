@@ -2,12 +2,13 @@ package com.poc.chatbot.CaseCreation.Service;
 
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,8 +51,8 @@ public class CaseCreationService {
 	@Autowired
 	PropertyFileReader propertyFileReader;
 
-	public String createCase(String claimNumber) throws IOException {
-		ObjectStore targetOs = caseManagerConnection.getConnection();
+	public String createCase(HttpServletRequest httpRequest,String claimNumber) throws IOException {
+		ObjectStore targetOs = caseManagerConnection.getConnection(httpRequest);
 		ObjectStoreReference targetOsRef = new ObjectStoreReference(targetOs);
 		CaseType caseType = CaseType.fetchInstance(targetOsRef, propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.caseType));
 		Case pendingCase = Case.createPendingInstance(caseType);
@@ -62,9 +63,9 @@ public class CaseCreationService {
 
 	}
 
-	public String validateClaim(String claimNumber) throws IOException {
+	public String validateClaim(HttpServletRequest httpRequest,String claimNumber) throws IOException {
 		String flag=null;
-		ObjectStore targetOs = caseManagerConnection.getConnection();
+		ObjectStore targetOs = caseManagerConnection.getConnection(httpRequest);
 		SearchSQL sql = new SearchSQL();
 		String query=ApplicationConstants.validateClaimQuery;
 		query=query.replace("claim", claimNumber);
@@ -82,13 +83,9 @@ public class CaseCreationService {
 
 	}	
 	@SuppressWarnings("unchecked")
-	public String uploadFile(MultipartFile file, String claimNumber,String filName) throws IOException {
-		/*
-		 * byte[] bytes = file.getBytes(); Path path = Paths.get("C://" +
-		 * file.getOriginalFilename()); Files.write(path, bytes);
-		 */
-		System.out.println(filName+" FileName");
-		ObjectStore targetOs = caseManagerConnection.getConnection();
+	public String uploadFile(HttpServletRequest httpRequest,MultipartFile file, String claimNumber,String filName) throws IOException {
+		
+		ObjectStore targetOs = caseManagerConnection.getConnection(httpRequest);
 		SearchSQL sql = new SearchSQL();
 		String query=ApplicationConstants.uploadDocumentQuery;
 		query=query.replace("claim", claimNumber);
@@ -140,8 +137,8 @@ public class CaseCreationService {
 
 	}
 	
-	public List<DocumentLink> documentSearch(String claimNumber) throws IOException{
-		ObjectStore targetOs = caseManagerConnection.getConnection();
+	public List<DocumentLink> documentSearch(HttpServletRequest httpRequest,String claimNumber) throws IOException{
+		ObjectStore targetOs = caseManagerConnection.getConnection(httpRequest);
 		SearchSQL sql = new SearchSQL();
 		String query = ApplicationConstants.searchDocumentQuery;
 		query=query.replace("claim", claimNumber);
@@ -179,4 +176,6 @@ public class CaseCreationService {
 		
 		return documentDetailsList;
 	}
+
+	
 }
