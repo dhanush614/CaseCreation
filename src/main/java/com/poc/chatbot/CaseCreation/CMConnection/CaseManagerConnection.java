@@ -28,19 +28,17 @@ public class CaseManagerConnection {
 	@Autowired
 	PropertyFileReader propertyFileReader;
 
-	public ObjectStore getConnection(HttpServletRequest httpRequest) throws IOException {
-		final String authorization = httpRequest.getHeader("Authorization");
+	public ObjectStore getConnection(HttpServletRequest httpRequest) throws Exception {
+		String authorization = httpRequest.getHeader("Authorization");
 		String username="";
 		String password="";
 		System.out.println("Authorization ::"+authorization);
 
-		if (authorization != null && authorization.toLowerCase().startsWith("basic")) {
+		if (!authorization.equals("null") && !authorization.isEmpty()) {
 
 		    // Authorization: Basic base64credentials
 
-		    String base64Credentials = authorization.substring("Basic".length()).trim();
-
-		    byte[] credDecoded = Base64.getDecoder().decode(base64Credentials);
+		    byte[] credDecoded = Base64.getDecoder().decode(authorization);
 
 		    String credentials = new String(credDecoded, StandardCharsets.UTF_8);
 
@@ -54,6 +52,7 @@ public class CaseManagerConnection {
 		    System.out.println("User name ::"+username+" Password ::"+password);
 
 		}
+		
 		String uri = propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.uri);
 		String TOS = propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.tos);
 		UserContext old = null;
@@ -69,7 +68,9 @@ public class CaseManagerConnection {
 			CaseMgmtContext cmc = new CaseMgmtContext(vwSessCache, new SimpleP8ConnectionCache());
 			oldCmc = CaseMgmtContext.set(cmc);
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
+			throw new Exception(e);
+			
 		} finally {
 			if (oldCmc != null) {
 				CaseMgmtContext.set(oldCmc);

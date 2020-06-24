@@ -23,4 +23,8 @@ public final class ApplicationConstants {
 	
 	public static final String documentUrl = "https://ibmbaw:9443/navigator/bookmark.jsp?desktop=baw&repositoryId=icmtos&docid={docId}&template_name=Document&version=released&vsId={versionId}";
 	
+	public static final String userAuthenticateException = "FNRCE0040E: E_NOT_AUTHENTICATED";
+	
+	public static final String passwordEmptyException = "FNRCA0035E: PASSWORD_IS_EMPTY_ERROR";
+	
 }

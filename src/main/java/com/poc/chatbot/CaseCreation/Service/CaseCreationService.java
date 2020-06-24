@@ -51,7 +51,7 @@ public class CaseCreationService {
 	@Autowired
 	PropertyFileReader propertyFileReader;
 
-	public String createCase(HttpServletRequest httpRequest,String claimNumber) throws IOException {
+	public String createCase(HttpServletRequest httpRequest,String claimNumber) throws Exception {
 		ObjectStore targetOs = caseManagerConnection.getConnection(httpRequest);
 		ObjectStoreReference targetOsRef = new ObjectStoreReference(targetOs);
 		CaseType caseType = CaseType.fetchInstance(targetOsRef, propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.caseType));
@@ -63,7 +63,7 @@ public class CaseCreationService {
 
 	}
 
-	public String validateClaim(HttpServletRequest httpRequest,String claimNumber) throws IOException {
+	public String validateClaim(HttpServletRequest httpRequest,String claimNumber) throws Exception {
 		String flag=null;
 		ObjectStore targetOs = caseManagerConnection.getConnection(httpRequest);
 		SearchSQL sql = new SearchSQL();
@@ -83,7 +83,7 @@ public class CaseCreationService {
 
 	}	
 	@SuppressWarnings("unchecked")
-	public String uploadFile(HttpServletRequest httpRequest,MultipartFile file, String claimNumber,String filName) throws IOException {
+	public String uploadFile(HttpServletRequest httpRequest,MultipartFile file, String claimNumber,String filName) throws Exception {
 		
 		ObjectStore targetOs = caseManagerConnection.getConnection(httpRequest);
 		SearchSQL sql = new SearchSQL();
@@ -137,7 +137,7 @@ public class CaseCreationService {
 
 	}
 	
-	public List<DocumentLink> documentSearch(HttpServletRequest httpRequest,String claimNumber) throws IOException{
+	public List<DocumentLink> documentSearch(HttpServletRequest httpRequest,String claimNumber) throws Exception{
 		ObjectStore targetOs = caseManagerConnection.getConnection(httpRequest);
 		SearchSQL sql = new SearchSQL();
 		String query = ApplicationConstants.searchDocumentQuery;

@@ -1,6 +1,5 @@
 package com.poc.chatbot.CaseCreation.Controller;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.poc.chatbot.CaseCreation.Constants.ApplicationConstants;
 import com.poc.chatbot.CaseCreation.Pojo.DocumentLink;
 import com.poc.chatbot.CaseCreation.Service.CaseCreationService;
 
@@ -30,21 +30,24 @@ public class CaseCreationController {
 		String caseId = null;
 		try {
 			caseId = caseCreationService.createCase(httpRequest,claimNumber);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return exceptionHandler(e);
 		}
 		return caseId;
 	}
 	
 	@GetMapping("/validate")
-	public String validateClaim(HttpServletRequest httpRequest,@RequestParam("claimNumber") String claimNumber) {
+	public String validateClaim(HttpServletRequest httpRequest,@RequestParam("claimNumber") String claimNumber){
+		
 		String validateFlag = null;
 		try {
 			validateFlag = caseCreationService.validateClaim(httpRequest,claimNumber);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return exceptionHandler(e);
 		}
 		return validateFlag;
 	}
@@ -55,9 +58,10 @@ public class CaseCreationController {
 		String result = null;
 		try {
 			result = caseCreationService.uploadFile(httpRequest,file, claimNumber,fileName);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return exceptionHandler(e);
 		}
 		return result;
 	}
@@ -67,10 +71,21 @@ public class CaseCreationController {
 		List<DocumentLink> documentLinkList = new ArrayList<DocumentLink>();
 		try {
 			documentLinkList = caseCreationService.documentSearch(httpRequest,claimNumber);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			//return exceptionHandler(e);
 		}
 		return documentLinkList;
+	}
+	
+	public String exceptionHandler(Exception e) {
+		if(e.getMessage().contains(ApplicationConstants.userAuthenticateException) || e.getMessage().contains(ApplicationConstants.passwordEmptyException)){
+			return "Error from service:You don't have permission to do this action";
+		}
+		else {
+			return "Error from service:Something went wrong, Please try again later..!!";
+		}
+
 	}
 }
