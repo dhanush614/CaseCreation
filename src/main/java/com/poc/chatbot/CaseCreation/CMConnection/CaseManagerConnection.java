@@ -34,7 +34,7 @@ public class CaseManagerConnection {
 		String password="";
 		System.out.println("Authorization ::"+authorization);
 
-		if (!authorization.equals("null") && !authorization.isEmpty()) {
+		 if (!authorization.equals("null") && !authorization.isEmpty()) {
 
 		    // Authorization: Basic base64credentials
 
