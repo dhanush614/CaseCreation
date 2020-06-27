@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -175,6 +177,53 @@ public class CaseCreationService {
 		}
 		
 		return documentDetailsList;
+	}
+	
+	public List<Map<String,String>> caseSearch(HttpServletRequest httpRequest, String claimNumber) throws Exception {
+		// TODO Auto-generated method stub
+		ObjectStore targetOs = caseManagerConnection.getConnection(httpRequest);
+		SearchSQL sql = new SearchSQL();
+		String query = ApplicationConstants.searchCasesQuery;
+		query = query.replace("claim", claimNumber);
+		sql.setQueryString(query);
+		int rowCount = 0;
+		List<String> casePropertyValuesList = new ArrayList<String>();
+		//Map<Integer, List<String>> propertiesRowMap = new HashMap<Integer, List<String>>();
+		
+		
+		List<Map<String,String>> finalList=new ArrayList<Map<String,String>>();
+
+		SearchScope scope = new SearchScope(targetOs);
+
+		RepositoryRowSet fetchRows = scope.fetchRows(sql, (Integer) null,
+
+				(PropertyFilter) null, new Boolean(true));
+		Iterator iterator = fetchRows.iterator();
+
+		while (iterator.hasNext()) {
+Map<String,String> rowMap=new HashMap<String,String>();
+			RepositoryRow row = (RepositoryRow) iterator.next();
+			Folder folderObj = (Folder) row.getProperties().getObjectValue("This");
+			//System.out.println("Folder Name " + folderObj.get_Name());
+			String[] casePropertySymbolicNames = propertyFileReader.getProperties()
+					.getProperty(ApplicationConstants.prefix + "." + ApplicationConstants.caseSearchSymbolicNames)
+					.split(",");
+			for (String symbolicName : casePropertySymbolicNames) {
+				//casePropertyValuesList.add(folderObj.getProperties().getObjectValue(symbolicName).toString());
+				Object propValue=folderObj.getProperties().getObjectValue(symbolicName).toString();
+				if(propValue!=null) {
+					rowMap.put(symbolicName,propValue.toString());
+				}else {
+					rowMap.put(symbolicName,"");
+				}
+			}
+			//propertiesRowMap.put(++rowCount, casePropertyValuesList);
+			finalList.add(rowMap);
+		}
+
+		//return propertiesRowMap;
+		//System.out.println(finalList);
+		return finalList;
 	}
 
 	

@@ -1,7 +1,9 @@
 package com.poc.chatbot.CaseCreation.Controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -77,6 +79,21 @@ public class CaseCreationController {
 			//return exceptionHandler(e);
 		}
 		return documentLinkList;
+	}
+	
+	@GetMapping("/caseSearch")
+	public List<Map<String,String>> caseSearch(HttpServletRequest httpRequest,
+			@RequestParam("claimNumber") String claimNumber) {
+		List<Map<String,String>> propertyValuesMap = new ArrayList<Map<String,String>>();
+		try {
+			propertyValuesMap = caseCreationService.caseSearch(httpRequest, claimNumber);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			// return exceptionHandler(e);
+		}
+		System.out.println(propertyValuesMap);
+		return propertyValuesMap;
 	}
 	
 	public String exceptionHandler(Exception e) {

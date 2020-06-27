@@ -17,8 +17,14 @@ public final class ApplicationConstants {
 	
 	public static final String prefix = "demo";
 	
+	public static final String caseSearchHeader = "caseSearch.header";
+
+	public static final String caseSearchSymbolicNames = "caseSearch.symbolicnames";
+
+	
 	public static final String validateClaimQuery = "SELECT [This] FROM [DM_Demo_CT] WHERE [DM_ClaimNumber] = claim";
 	public static final String uploadDocumentQuery = "SELECT TOP 1 [This] FROM [DM_Demo_CT] WHERE [DM_ClaimNumber] = claim";
+	public static final String searchCasesQuery = "SELECT [This] FROM [DM_Demo_CT] WHERE [DM_ClaimNumber] = claim";
 	public static final String searchDocumentQuery = "SELECT [This] FROM [DM_Demo_CT] WHERE [DM_ClaimNumber] = claim";
 	
 	public static final String documentUrl = "https://ibmbaw:9443/navigator/bookmark.jsp?desktop=baw&repositoryId=icmtos&docid={docId}&template_name=Document&version=released&vsId={versionId}";
