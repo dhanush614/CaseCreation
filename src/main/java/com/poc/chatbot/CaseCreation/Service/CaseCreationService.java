@@ -13,6 +13,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,14 +52,14 @@ public class CaseCreationService {
 	public CaseManagerConnection caseManagerConnection;
 	
 	@Autowired
-	PropertyFileReader propertyFileReader;
+	Environment env;
 
 	public String createCase(HttpServletRequest httpRequest,String claimNumber) throws Exception {
 		ObjectStore targetOs = caseManagerConnection.getConnection(httpRequest);
 		ObjectStoreReference targetOsRef = new ObjectStoreReference(targetOs);
-		CaseType caseType = CaseType.fetchInstance(targetOsRef, propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.caseType));
+		CaseType caseType = CaseType.fetchInstance(targetOsRef, env.getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.caseType));
 		Case pendingCase = Case.createPendingInstance(caseType);
-		pendingCase.getProperties().putObjectValue(propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.claimNumberProperty), claimNumber);
+		pendingCase.getProperties().putObjectValue(env.getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.claimNumberProperty), claimNumber);
 		pendingCase.save(RefreshMode.REFRESH, null, ModificationIntent.MODIFY);
 		String caseId = pendingCase.getId().toString();
 		return caseId;
@@ -104,7 +105,7 @@ public class CaseCreationService {
 			folder = (Folder) row.getProperties().getObjectValue("This");
 			fileName = filName;
 
-			Document doc = Factory.Document.createInstance(targetOs, propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.docClass));
+			Document doc = Factory.Document.createInstance(targetOs, env.getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.docClass));
 			if (file != null) {
 				ContentTransfer contentTransfer = Factory.ContentTransfer.createInstance();
 					contentTransfer.setCaptureSource(file.getInputStream());
@@ -175,15 +176,16 @@ public class CaseCreationService {
 				documentDetailsList.add(documentLink);
 			}
 		}
-		
+		System.out.println(documentDetailsList);
 		return documentDetailsList;
 	}
 	
-	public List<Map<String,String>> caseSearch(HttpServletRequest httpRequest, String claimNumber) throws Exception {
+	public List<Map<String,String>> search(HttpServletRequest httpRequest, String claimNumber, String actionTaken) throws Exception {
 		// TODO Auto-generated method stub
 		ObjectStore targetOs = caseManagerConnection.getConnection(httpRequest);
 		SearchSQL sql = new SearchSQL();
-		String query = ApplicationConstants.searchCasesQuery;
+		String query = env.getProperty(actionTaken+"_"+ApplicationConstants.query);
+		System.out.println(query);
 		query = query.replace("claim", claimNumber);
 		sql.setQueryString(query);
 		int rowCount = 0;
@@ -203,17 +205,20 @@ public class CaseCreationService {
 		while (iterator.hasNext()) {
 Map<String,String> rowMap=new HashMap<String,String>();
 			RepositoryRow row = (RepositoryRow) iterator.next();
-			Folder folderObj = (Folder) row.getProperties().getObjectValue("This");
+			Properties prop = row.getProperties();
 			//System.out.println("Folder Name " + folderObj.get_Name());
-			String[] casePropertySymbolicNames = propertyFileReader.getProperties()
-					.getProperty(ApplicationConstants.prefix + "." + ApplicationConstants.caseSearchSymbolicNames)
+			String[] casePropertySymbolicNames = env.getProperty(actionTaken+"_"+ApplicationConstants.symbolicNames)
 					.split(",");
 			for (String symbolicName : casePropertySymbolicNames) {
 				//casePropertyValuesList.add(folderObj.getProperties().getObjectValue(symbolicName).toString());
-				Object propValue=folderObj.getProperties().getObjectValue(symbolicName).toString();
-				if(propValue!=null) {
+				Object propValue=prop.getObjectValue(symbolicName);
+				if(propValue!=null && !symbolicName.equals("CmAcmCaseState")) {
 					rowMap.put(symbolicName,propValue.toString());
-				}else {
+				}
+				else if(symbolicName.equals("CmAcmCaseState")){
+					rowMap.put(symbolicName,ApplicationConstants.caseStatus.values()[Integer.parseInt(propValue.toString())].toString());
+				}
+				else {
 					rowMap.put(symbolicName,"");
 				}
 			}

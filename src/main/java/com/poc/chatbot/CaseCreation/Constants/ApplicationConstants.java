@@ -33,4 +33,10 @@ public final class ApplicationConstants {
 	
 	public static final String passwordEmptyException = "FNRCA0035E: PASSWORD_IS_EMPTY_ERROR";
 	
+	public static final String symbolicNames = "SYMBOLIC_NAME";
+	
+	public static final String query = "QUERY";
+	
+	public static enum caseStatus {New, Initializing, Working, Complete, Failed}
+	
 }

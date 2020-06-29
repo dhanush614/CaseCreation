@@ -8,6 +8,9 @@ import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.filenet.api.constants.ClassNames;
@@ -22,11 +25,12 @@ import com.ibm.casemgmt.api.context.SimpleVWSessionCache;
 import com.poc.chatbot.CaseCreation.Constants.ApplicationConstants;
 import com.poc.chatbot.CaseCreation.PropertyReader.PropertyFileReader;
 
+@PropertySource("file:C:/PropertyFiles/sample.properties")
 @Component
 public class CaseManagerConnection {
 	
 	@Autowired
-	PropertyFileReader propertyFileReader;
+	Environment env;
 
 	public ObjectStore getConnection(HttpServletRequest httpRequest) throws Exception {
 		String authorization = httpRequest.getHeader("Authorization");
@@ -53,8 +57,8 @@ public class CaseManagerConnection {
 
 		}
 		
-		String uri = propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.uri);
-		String TOS = propertyFileReader.getProperties().getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.tos);
+		String uri = env.getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.uri);
+		String TOS = env.getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.tos);
 		UserContext old = null;
 		CaseMgmtContext oldCmc = null;
 		ObjectStore targetOS = null;

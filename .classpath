@@ -31,7 +31,6 @@
 	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARSThis/acmapi.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARSThis/Jace.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARSThis/JSON4J_Apache.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARSThis/log4j.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARSThis/pe.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARSThis/pe3pt.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARSThis/stax-api.jar"/>

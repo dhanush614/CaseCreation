@@ -68,31 +68,32 @@ public class CaseCreationController {
 		return result;
 	}
 	
-	@GetMapping("/search")
-	public List<DocumentLink> documentSearch(HttpServletRequest httpRequest,@RequestParam("claimNumber") String claimNumber) {
+	@GetMapping("/documentSearch")
+	public List<DocumentLink> documentSearch(HttpServletRequest httpRequest,@RequestParam("claimNumber") String claimNumber) throws Exception {
 		List<DocumentLink> documentLinkList = new ArrayList<DocumentLink>();
 		try {
 			documentLinkList = caseCreationService.documentSearch(httpRequest,claimNumber);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new Exception(e.getMessage());
 			//return exceptionHandler(e);
 		}
 		return documentLinkList;
 	}
 	
-	@GetMapping("/caseSearch")
-	public List<Map<String,String>> caseSearch(HttpServletRequest httpRequest,
-			@RequestParam("claimNumber") String claimNumber) {
+	@PostMapping("/search")
+	public List<Map<String,String>> search(HttpServletRequest httpRequest,
+			@RequestParam("claimNumber") String claimNumber, @RequestParam("searchAction") String actionTaken) throws Exception {
 		List<Map<String,String>> propertyValuesMap = new ArrayList<Map<String,String>>();
 		try {
-			propertyValuesMap = caseCreationService.caseSearch(httpRequest, claimNumber);
+			propertyValuesMap = caseCreationService.search(httpRequest, claimNumber, actionTaken);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new Exception(e.getMessage());
 			// return exceptionHandler(e);
 		}
-		System.out.println(propertyValuesMap);
 		return propertyValuesMap;
 	}
 	
