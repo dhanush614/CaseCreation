@@ -176,7 +176,6 @@ public class CaseCreationService {
 				documentDetailsList.add(documentLink);
 			}
 		}
-		System.out.println(documentDetailsList);
 		return documentDetailsList;
 	}
 	
