@@ -28,13 +28,13 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARSThis/acmapi.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARSThis/Jace.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARSThis/JSON4J_Apache.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARSThis/pe.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARSThis/pe3pt.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARSThis/stax-api.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARSThis/xlxpScanner.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARSThis/xlxpScannerUtils.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARS/acmapi.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARS/Jace.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARS/JSON4J_Apache.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARS/pe.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARS/pe3pt.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARS/stax-api.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARS/xlxpScanner.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/JARS/xlxpScannerUtils.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -13,6 +13,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.filenet.api.constants.ClassNames;
 import com.filenet.api.core.Connection;
 import com.filenet.api.core.Domain;
@@ -25,14 +26,12 @@ import com.ibm.casemgmt.api.context.SimpleVWSessionCache;
 import com.poc.chatbot.CaseCreation.Constants.ApplicationConstants;
 import com.poc.chatbot.CaseCreation.PropertyReader.PropertyFileReader;
 
-@PropertySource("file:C:/PropertyFiles/sample.properties")
+//@PropertySource("file:C:/PropertyFiles/sample.properties")
 @Component
 public class CaseManagerConnection {
 	
-	@Autowired
-	Environment env;
 
-	public ObjectStore getConnection(HttpServletRequest httpRequest) throws Exception {
+	public ObjectStore getConnection(HttpServletRequest httpRequest, JsonNode jsonNode) throws Exception {
 		String authorization = httpRequest.getHeader("Authorization");
 		String username="";
 		String password="";
@@ -57,8 +56,8 @@ public class CaseManagerConnection {
 
 		}
 		
-		String uri = env.getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.uri);
-		String TOS = env.getProperty(ApplicationConstants.prefix+"."+ApplicationConstants.tos);
+		String uri = jsonNode.get(ApplicationConstants.uri).asText();
+		String TOS = jsonNode.get(ApplicationConstants.tos).asText();
 		UserContext old = null;
 		CaseMgmtContext oldCmc = null;
 		ObjectStore targetOS = null;
