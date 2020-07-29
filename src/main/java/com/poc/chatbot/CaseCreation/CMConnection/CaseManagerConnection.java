@@ -30,7 +30,6 @@ import com.poc.chatbot.CaseCreation.PropertyReader.PropertyFileReader;
 @Component
 public class CaseManagerConnection {
 	
-
 	public ObjectStore getConnection(HttpServletRequest httpRequest, JsonNode jsonNode) throws Exception {
 		String authorization = httpRequest.getHeader("Authorization");
 		String username="";

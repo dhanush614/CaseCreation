@@ -149,6 +149,7 @@ public class CaseCreationService {
 		String query = jsonNode.get(ApplicationConstants.searchDocumentQuery).asText();
 		query=query.replace("claim", claimNumber);
 		sql.setQueryString(query);
+		System.out.println(query);
 		List<DocumentLink> documentDetailsList = new ArrayList<DocumentLink>();
 
 		SearchScope scope = new SearchScope(targetOs);
