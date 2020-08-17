@@ -53,8 +53,6 @@ public class CaseCreationService {
 
 	@Autowired
 	public CaseManagerConnection caseManagerConnection;
-
-
 	private JsonNode jsonNode = null;
 
 	public String createCase(HttpServletRequest httpRequest,String claimNumber, String propertyData) throws Exception {
